@@ -9,9 +9,11 @@ async fn main() {
     let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
 
     loop {
-        // The second item contains the IP and port of the new connection
         let (socket, _) = listener.accept().await.unwrap();
-        process(socket).await;
+        // New task is spawned for each inbound socket
+        tokio::spawn(async move {
+            process(socket).await;
+        });
     }
 }
 
